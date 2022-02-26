@@ -57,6 +57,7 @@ app.get("/api/:date", function (req, res) {
   return getDateResponse(date, res);
 });
 
+//Create Expected Date Response
 function getDateResponse(date, res) {
   //Convert Date to Unix Time
   let unixTime = date.getTime();
