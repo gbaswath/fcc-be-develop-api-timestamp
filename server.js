@@ -28,16 +28,17 @@ app.get("/api/hello", function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
+//Return Current Unix Time & UTC String Date
+app.get("/api/", function (req, res) {
+  console.log("Empty Params so Current Date is used");
+  return getDateResponse(new Date(), res);
+});
+
 //Return Unix Time & UTC String Date
-app.get("/api/:date(\*)", function (req, res) {
+app.get("/api/:date", function (req, res) {
   let reqDate = req.params['date'];
   //Get Date from URL
   console.log("Requested Date " + reqDate + " from URL");
-  //Handle Empty Date
-  if (reqDate === '') {
-    console.log("Empty Params so Current Date is used");
-    return getDateResponse(new Date(), res);
-  }
   //Create & Check Date
   let date = new Date(reqDate);
   if (isNaN(date)) {
