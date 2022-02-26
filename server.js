@@ -29,30 +29,43 @@ app.get("/api/hello", function (req, res) {
 });
 
 //Return Unix Time & UTC String Date
-app.get("/api/:date", function (req, res) {
-  //Get Date from URL
+app.get("/api/:date(\*)", function (req, res) {
   let reqDate = req.params['date'];
+  //Get Date from URL
   console.log("Requested Date " + reqDate + " from URL");
-  //Parse Create Date
-  let date = new Date(reqDate);
-  //If Date is unix Time format it needs to handled separately
-  if(isNaN(date)) {
-    console.log("Date is not in String Format");
-    date = new Date(parseInt(reqDate));
-    console.log("Date is in Unix Time Format " + date);
+  //Handle Empty Date
+  if (reqDate === '') {
+    console.log("Empty Params so Current Date is used");
+    return getDateResponse(new Date(), res);
   }
-  //Parsed Date Result
+  //Create & Check Date
+  let date = new Date(reqDate);
+  if (isNaN(date)) {
+    console.log("Date is not in String Format.. Hence Checking it is Integer");
+    if (isNaN(reqDate)) {
+      console.log("Not an Integer " + reqDate + " to Parse");
+      res.json({ error: "Invalid Date" });
+      return;
+    }
+    //If Date is unix Time format it needs to handled separately
+    date = new Date(parseInt(reqDate));
+    console.log("Date is Integer and in Unix Time Format " + date);
+  }
+  //Valid Date
   console.log("Parsed Date " + date);
+  return getDateResponse(date, res);
+});
+
+function getDateResponse(date, res) {
   //Convert Date to Unix Time
   let unixTime = date.getTime();
-  console.log("Unix Time " + unixTime);
   //Convert Date to UTC String Format
   let utcDate = date.toUTCString();
-  console.log("UTC String " + utcDate);
   //Prepare JSON Result
-  let result = {"unix": unixTime, "utc" : utcDate};
+  let result = { "unix": unixTime, "utc": utcDate };
+  console.log("Prepared Current Date " + JSON.stringify(result));
   res.json(result);
-});
+}
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
